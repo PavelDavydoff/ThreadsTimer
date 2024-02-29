@@ -1,9 +1,11 @@
 package com.example.threadstimer
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Vibrator
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -34,18 +36,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startTimer() {
-        val startTime = System.currentTimeMillis()
-        handler?.post {
-            updateTimer(startTime)
-        }
+        val currentTime = System.currentTimeMillis()
+        val startTime = editText?.text.toString().toLong()
+        handler?.post(
+            updateTimer(startTime, currentTime)
+        )
     }
 
-    private fun updateTimer(startTime: Long): Runnable {
+    private fun updateTimer(startTime: Long, currentTime: Long): Runnable {
         return object : Runnable {
             override fun run() {
-                val time = ((System.currentTimeMillis() - startTime)/1000).toString()
-                textView?.text = time
-                handler?.postDelayed(this, ONE_SECOND)
+                val time = startTime - ((System.currentTimeMillis() - currentTime))/1000
+                textView?.text = time.toString()
+                if (time > 0) {
+                    handler?.postDelayed(this, ONE_SECOND)
+                }
+                else{
+                    val vibrator = applicationContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                    vibrator.vibrate(300L)
+                    textView?.text = "Done!"
+                }
             }
         }
     }
