@@ -43,7 +43,8 @@ class MainActivity : AppCompatActivity() {
     private fun updateTimer(startTime: Long): Runnable {
         return object : Runnable {
             override fun run() {
-                textView?.text = (System.currentTimeMillis() - startTime).toString()
+                val time = ((System.currentTimeMillis() - startTime)/1000).toString()
+                textView?.text = time
                 handler?.postDelayed(this, ONE_SECOND)
             }
         }
