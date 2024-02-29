@@ -37,28 +37,35 @@ class MainActivity : AppCompatActivity() {
 
     private fun startTimer() {
         val currentTime = System.currentTimeMillis()
-        val startTime = editText?.text.toString().toLong()
-        if (startTime < 0 || startTime > 30){
-            textView?.text = "Не то число!"
+        val text = editText?.text
+        val startTime: Long?
+        try {
+            startTime = text.toString().toLong()
+            if (startTime < 0 || startTime > 30) {
+                textView?.text = "Не то число!"
+            } else {
+                handler?.post(
+                    updateTimer(startTime, currentTime)
+                )
+                button?.isEnabled = false
+            }
+        } catch (e: NumberFormatException) {
+            textView?.text = "Введи число!"
         }
-        else {
-            handler?.post(
-                updateTimer(startTime, currentTime)
-            )
-            button?.isEnabled = false
-        }
+
+
     }
 
     private fun updateTimer(startTime: Long, currentTime: Long): Runnable {
         return object : Runnable {
             override fun run() {
-                val time = startTime - ((System.currentTimeMillis() - currentTime))/1000
+                val time = startTime - ((System.currentTimeMillis() - currentTime)) / 1000
                 textView?.text = time.toString()
                 if (time > 0) {
                     handler?.postDelayed(this, ONE_SECOND)
-                }
-                else{
-                    val vibrator = applicationContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                } else {
+                    val vibrator =
+                        applicationContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                     vibrator.vibrate(300L)
                     textView?.text = "Done!"
                     button?.isEnabled = true
