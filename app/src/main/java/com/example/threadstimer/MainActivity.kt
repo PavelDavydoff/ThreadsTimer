@@ -38,9 +38,15 @@ class MainActivity : AppCompatActivity() {
     private fun startTimer() {
         val currentTime = System.currentTimeMillis()
         val startTime = editText?.text.toString().toLong()
-        handler?.post(
-            updateTimer(startTime, currentTime)
-        )
+        if (startTime < 0 || startTime > 30){
+            textView?.text = "Не то число!"
+        }
+        else {
+            handler?.post(
+                updateTimer(startTime, currentTime)
+            )
+            button?.isEnabled = false
+        }
     }
 
     private fun updateTimer(startTime: Long, currentTime: Long): Runnable {
@@ -55,6 +61,7 @@ class MainActivity : AppCompatActivity() {
                     val vibrator = applicationContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                     vibrator.vibrate(300L)
                     textView?.text = "Done!"
+                    button?.isEnabled = true
                 }
             }
         }
